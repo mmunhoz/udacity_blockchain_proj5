@@ -1,6 +1,6 @@
 pragma solidity ^0.4.23;
 
-import 'openzeppelin-solidity/contracts/token/ERC721/ERC721.sol';
+import "openzeppelin-solidity/contracts/token/ERC721/ERC721.sol";
 
 contract StarNotary is ERC721 {
 
@@ -9,7 +9,14 @@ contract StarNotary is ERC721 {
     }
 
 //  Add a name and a symbol for your starNotary tokens
+    string public tokenName = "StellaBlueToken";
+    string public tokenSymbol = "StB";
+    // uint256 public decimals = 18;
+    // uint256 public initialSuply = 10000 * (10 ** decimals);
 
+    function name() external view returns (string) { return tokenName; }
+
+    function symbol() external view returns (string) { return tokenSymbol; }
 //
 
     mapping(uint256 => Star) public tokenIdToStarInfo;
@@ -24,7 +31,10 @@ contract StarNotary is ERC721 {
     }
 
 // Add a function lookUptokenIdToStarInfo, that looks up the stars using the Token ID, and then returns the name of the star.
-
+    function lookUptokenIdToStarInfo(uint256 _tokenId) public view returns(string memory) {
+        Star memory retStar = tokenIdToStarInfo[_tokenId];
+        return retStar.name; 
+    }
 //
 
     function putStarUpForSale(uint256 _tokenId, uint256 _price) public {
@@ -49,15 +59,32 @@ contract StarNotary is ERC721 {
             msg.sender.transfer(msg.value - starCost);
         }
         starsForSale[_tokenId] = 0;
-      }
+    }
 
 // Add a function called exchangeStars, so 2 users can exchange their star tokens...
 //Do not worry about the price, just write code to exchange stars between users.
+    function exchangeStars(uint256 aStar, uint256 bStar, address aUser, address bUser) public {
+        //use approve
+        
+        require(ownerOf(aStar) == aUser && ownerOf(bStar) == bUser);
+
+        _removeTokenFrom(aUser, aStar);
+        _addTokenTo(bUser, aStar);
+
+        _removeTokenFrom(bUser, bStar);
+        _addTokenTo(aUser, bStar);
+    }
 
 //
 
 // Write a function to Transfer a Star. The function should transfer a star from the address of the caller.
 // The function should accept 2 arguments, the address to transfer the star to, and the token ID of the star.
+    function transferStar(address to, uint256 _starId) public {
+        require(ownerOf(_starId) == msg.sender);
+        _removeTokenFrom(msg.sender, _starId);
+        _addTokenTo(to, _starId);
+    }
+
 //
 
 }

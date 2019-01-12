@@ -1,5 +1,5 @@
 //import 'babel-polyfill';
-const StarNotary = artifacts.require('./starNotary.sol')
+const StarNotary = artifacts.require('./StarNotary.sol')
 
 let instance;
 let accounts;
@@ -66,5 +66,47 @@ contract('StarNotary', async (accs) => {
   // Write Tests for:
 
 // 1) The token name and token symbol are added properly.
+  it('lets check token name and symbol', async()=> {
+    assert.equal(await instance.name(), "StellaBlueToken");
+    assert.equal(await instance.symbol(), "StB");
+  });
+
+//
+
 // 2) 2 users can exchange their stars.
+  it('lets users exchange stars', async()=> {
+    let userA = accounts[2]; // 0xc5fdf4076b8f3a5357c5e395ab970b5b54098fef
+    let userB = accounts[3]; // 0x821aea9a577a9b44299b9c15c88cf3087f3b5544
+    
+    let aStarId = 7;
+    let bStarId = 8;
+
+    await instance.createStar('a star', aStarId, {from: userA});
+    await instance.createStar('b star', bStarId, {from: userB});
+
+    await instance.exchangeStars(aStarId, bStarId, userA, userB);
+
+    let ownerStarA = await instance.ownerOf.call(aStarId);
+    let ownerStarB = await instance.ownerOf.call(bStarId);
+
+    assert.equal(ownerStarA, userB);
+    assert.equal(ownerStarB, userA);
+  });
+
+//
+
 // 3) Stars Tokens can be transferred from one address to another.
+  it('lets transfer a star from an address to another', async()=> {
+    let accFrom = accounts[2]; // 0xc5fdf4076b8f3a5357c5e395ab970b5b54098fef
+    let accTo = accounts[3]; // 0x821aea9a577a9b44299b9c15c88cf3087f3b5544
+    let starId = 6
+
+    await instance.createStar('blue shooting star', starId, {from: accFrom});
+
+    await instance.transferStar(accTo, starId, {from: accFrom});
+
+    assert.equal(await instance.ownerOf.call(starId), accTo);
+
+  });
+
+//
