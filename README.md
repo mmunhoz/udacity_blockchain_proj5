@@ -21,5 +21,5 @@ __0x07185887A470e0531b81208d0B8B51FA041b176e__
 
 
 ### Rinkeby Network Conecction
-This project uses a configuration file to connect to Rinkeby Blockchain Test Network.
-The file contains a Meta-mask seed and an Infura link to create a connection with this network and deploy the token. The revisors are suposed to replace it to their own hardcode configuration for privacy matters. 
+This project uses a configuration file (rinkeby-config.js which is added on .gitignore file) to connect to Rinkeby Blockchain Test Network.
+The file contains a Meta-mask seed and an Infura link to create a connection with this network and deploy the contract. For privacy matters, the revisors are suposed to replace it (in truffle.js file) by their own hardcoded configuration. 
